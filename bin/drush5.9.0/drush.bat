@@ -13,6 +13,7 @@ rem set HOME=H:/drush
 rem set TEMP=H:/drush
 SET HOME=~NEARD_WIN_PATH~\tmp\drush
 SET TEMP=~NEARD_WIN_PATH~\tmp\drush
+SET PATH=%PATH%;%~dp0\bins;%~dp0\mysql
 
 REM See http://drupal.org/node/506448 for more information.
 @php.exe "%~dp0drush.php" --php="php.exe" %*
