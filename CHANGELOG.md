@@ -1,9 +1,10 @@
 # Changelog
 
-## r1 (2016/04/30)
+### [Check compatibility with Neard](https://github.com/crazy-max/neard/wiki/toolDrush#latest) before downloading.
 
-This release works since **[Neard 1.0.19](https://github.com/crazy-max/neard/releases/tag/v1.0.19)**
+## r1 (2016/04/30)
 
 * Add bundles : 5.9.0, 6.7.0, 7.3.0, 8.1.0
 * Move HOME and TEMP to `neard\tmp\drush`
 * Include mysql.exe and required bins (bzip2, gzip, libarchive, tar, wget)
+* Create template files (.nrd) for future Neard release.
