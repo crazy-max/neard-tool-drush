@@ -2,6 +2,10 @@
 
 ### [Check compatibility with Neard](https://github.com/crazy-max/neard/wiki/toolDrush#latest) before downloading.
 
+## r2 (2016/05/12)
+
+* Add bundle : 8.1.2
+
 ## r1 (2016/04/30)
 
 * Add bundles : 5.9.0, 6.7.0, 7.3.0, 8.1.0
