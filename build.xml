@@ -133,7 +133,6 @@
                 mysqlcheck.exe
               "/>
             </copy>
-            <echo message="${mysql.prop.contents}"/>
           </then>
         </if>
         <delete file="${bundle.srcfinal}/bins.properties"/>
