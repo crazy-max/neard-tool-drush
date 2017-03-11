@@ -1,19 +1,154 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="neard-tool-drush" basedir=".">
+  
+  <dirname property="project.basedir" file="${ant.file.neard-tool-drush}"/>
+  <property name="root.dir" location="${project.basedir}/.."/>
+  <property name="build.properties" value="${project.basedir}/build.properties"/>
+  <property file="${build.properties}"/>
+  
+  <!-- Neard dev -->
+  <property name="neard-dev.path" location="${root.dir}/neard-dev"/>
+  <fail unless="neard-dev.path" message="Project 'neard-dev' not found in ${neard-dev.path}"/>
+  <echo message="Neard dev found in ${neard-dev.path}" level="debug"/> 
+  
+  <!-- Import build-commons.xml -->
+  <import file="${neard-dev.path}/build/build-commons.xml"/>
+  <!-- Import build-bundle.xml -->
+  <import file="${neard-dev.path}/build/build-bundle.xml"/>
+  
+  <target name="release.build">
+    <basename property="bundle.folder" file="${bundle.path}"/>
+    <replaceproperty src="bundle.folder" dest="bundle.version" replace="${bundle.name}" with=""/>
     
-    <dirname property="project.basedir" file="${ant.file.neard-tool-drush}" />
-    <property name="root.dir" location="${project.basedir}/.." />
-    <property name="build.properties" value="${project.basedir}/build.properties" />
-    <property file="${build.properties}" />
+    <getbundlesrc name="${bundle.name}" version="${bundle.version}" propSrcDest="bundle.srcdest" propSrcFilename="bundle.srcfilename"/>
+    <propertyregex property="bundle.srcbasename" input="${bundle.srcfilename}" regexp="(.*)\.(.*)" select="\1"/>
+    <condition property="bundle.srcfinal" value="${bundle.srcdest}/${bundle.srcbasename}"><available file="${bundle.srcdest}/${bundle.srcbasename}" type="dir"/></condition>
+    <fail unless="bundle.srcfinal" message="Main folder not found"/>
+    <assertfile file="${bundle.srcfinal}/drush"/>
     
-    <!-- Neard dev -->
-    <property name="neard-dev.path" location="${root.dir}/neard-dev" />
-    <fail unless="neard-dev.path" message="Project 'neard-dev' not found in ${neard-dev.path}" />
-    <echo message="Neard dev found in ${neard-dev.path}" level="debug" /> 
+    <!-- Temp copy -->
+    <copy todir="${bundle.srcfinal}" overwrite="true">
+      <fileset dir="${bundle.path}" defaultexcludes="yes"/>
+    </copy>
     
-    <!-- Import build-commons.xml -->
-    <import file="${neard-dev.path}/build/build-commons.xml" />
-    <!-- Import build-bundle.xml -->
-    <import file="${neard-dev.path}/build/build-bundle.xml" />
+    <!-- Composer -->
+    <if>
+      <available file="${bundle.srcfinal}/composer.json" type="file"/>
+      <then>
+        <composer dir="${bundle.srcfinal}">
+          <args>
+            <arg value="update"/>
+            <arg value="--no-dev"/>
+            <arg value="--prefer-lowest"/>
+            <arg value="--optimize-autoloader"/>
+          </args>
+        </composer>
+      </then>
+    </if>
     
+    <!-- Binaries -->
+    <if>
+      <available file="${bundle.srcfinal}/bins.properties" type="file"/>
+      <then>
+        <property prefix="drush" file="${bundle.srcfinal}/bins.properties"/>
+        <mkdir dir="${bundle.srcfinal}/bins"/>
+        <!-- bzip2 -->
+        <if>
+          <isset property="drush.bzip2"/>
+          <then>
+            <download url="${drush.bzip2}" returnProperty="bzip2.dest"/>
+            <assertfile file="${bzip2.dest}/bin/bzip2.exe"/>
+            <copy todir="${bundle.srcfinal}/bins" overwrite="true">
+              <fileset dir="${bzip2.dest}/bin"/>
+            </copy>
+          </then>
+        </if>
+        <!-- gzip -->
+        <if>
+          <isset property="drush.gzip"/>
+          <then>
+            <download url="${drush.gzip}" returnProperty="gzip.dest"/>
+            <assertfile file="${gzip.dest}/bin/gzip.exe"/>
+            <copy todir="${bundle.srcfinal}/bins" overwrite="true">
+              <fileset dir="${gzip.dest}/bin"/>
+            </copy>
+          </then>
+        </if>
+        <!-- libarchive -->
+        <if>
+          <isset property="drush.libarchive"/>
+          <then>
+            <download url="${drush.libarchive}" returnProperty="libarchive.dest"/>
+            <assertfile file="${libarchive.dest}/bin/bsdtar.exe"/>
+            <copy todir="${bundle.srcfinal}/bins" overwrite="true">
+              <fileset dir="${libarchive.dest}/bin"/>
+            </copy>
+          </then>
+        </if>
+        <!-- tar -->
+        <if>
+          <isset property="drush.tar"/>
+          <then>
+            <download url="${drush.tar}" returnProperty="tar.dest"/>
+            <assertfile file="${tar.dest}/bin/tar.exe"/>
+            <copy todir="${bundle.srcfinal}/bins" overwrite="true">
+              <fileset dir="${tar.dest}/bin"/>
+            </copy>
+          </then>
+        </if>
+        <!-- wget -->
+        <if>
+          <isset property="drush.wget"/>
+          <then>
+            <download url="${drush.wget}" returnProperty="wget.dest"/>
+            <assertfile file="${wget.dest}/bin/wget.exe"/>
+            <copy todir="${bundle.srcfinal}/bins" overwrite="true">
+              <fileset dir="${wget.dest}/bin"/>
+            </copy>
+          </then>
+        </if>
+        <!-- wget-dep -->
+        <if>
+          <isset property="drush.wget-dep"/>
+          <then>
+            <download url="${drush.wget-dep}" returnProperty="wget-dep.dest"/>
+            <assertfile file="${wget-dep.dest}/bin/libeay32.dll"/>
+            <copy todir="${bundle.srcfinal}/bins" overwrite="true">
+              <fileset dir="${wget-dep.dest}/bin"/>
+            </copy>
+          </then>
+        </if>
+        <!-- mysql -->
+        <if>
+          <isset property="drush.mysql"/>
+          <then>
+            <download url="${drush.mysql}" skipexisting="true" returnProperty="mysql.dest"/>
+            <basename property="mysql.filename" file="${drush.mysql}"/>
+            <propertyregex property="mysql.basename" input="${mysql.filename}" regexp="(.*)\.(.*)" select="\1"/>
+            <assertfile file="${mysql.dest}/${mysql.basename}/bin/mysql.exe"/>
+            <copy todir="${bundle.srcfinal}/bins" overwrite="true">
+              <fileset dir="${mysql.dest}/${mysql.basename}/bin" includes="
+                mysql.exe,
+                mysqladmin.exe,
+                mysqlcheck.exe
+              "/>
+            </copy>
+            <echo message="${mysql.prop.contents}"/>
+          </then>
+        </if>
+        <delete file="${bundle.srcfinal}/bins.properties"/>
+      </then>
+    </if>
+    
+    <delete dir="${bundle.tmp.prep.path}/${bundle.folder}"/>
+    <mkdir dir="${bundle.tmp.prep.path}/${bundle.folder}"/>
+    <copy todir="${bundle.tmp.prep.path}/${bundle.folder}" overwrite="true">
+      <fileset dir="${bundle.srcfinal}"/>
+    </copy>
+    <copy todir="${bundle.tmp.prep.path}/${bundle.folder}" overwrite="true">
+      <fileset dir="${bundle.path}" defaultexcludes="yes" excludes="
+        bins.properties"
+      />
+    </copy>
+  </target>
 </project>
