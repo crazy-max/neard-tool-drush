@@ -26,25 +26,22 @@
     <fail unless="bundle.srcfinal" message="Main folder not found"/>
     <assertfile file="${bundle.srcfinal}/drush"/>
     
+    <!-- Remove content of src (use composer instead) -->
+    <delete dir="${bundle.srcfinal}"/>
+    <mkdir dir="${bundle.srcfinal}"/>
+    
+    <!-- Composer -->
+    <composer dir="${bundle.srcfinal}">
+      <args>
+        <arg value="require"/>
+        <arg value="drush/drush:${bundle.version}"/>
+      </args>
+    </composer>
+    
     <!-- Temp copy -->
     <copy todir="${bundle.srcfinal}" overwrite="true">
       <fileset dir="${bundle.path}" defaultexcludes="yes"/>
     </copy>
-    
-    <!-- Composer -->
-    <if>
-      <available file="${bundle.srcfinal}/composer.json" type="file"/>
-      <then>
-        <composer dir="${bundle.srcfinal}">
-          <args>
-            <arg value="update"/>
-            <arg value="--no-dev"/>
-            <arg value="--prefer-lowest"/>
-            <arg value="--optimize-autoloader"/>
-          </args>
-        </composer>
-      </then>
-    </if>
     
     <!-- Binaries -->
     <if>
