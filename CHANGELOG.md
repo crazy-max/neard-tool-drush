@@ -1,5 +1,9 @@
 # Changelog
 
+## r5 (2017/06/07)
+
+* Drush 8.1.11 r4 malformed (Issue crazy-max/neard#272)
+
 ## r4 (2017/05/23)
 
 * New bundle : 8.1.11 (Issue crazy-max/neard#260)
