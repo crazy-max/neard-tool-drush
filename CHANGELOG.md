@@ -2,19 +2,19 @@
 
 ## r5 (2017/06/07)
 
-* Drush 8.1.11 r4 malformed (Issue crazy-max/neard#272)
+* Drush 8.1.11 r4 malformed (Issue neard/neard#272)
 
 ## r4 (2017/05/23)
 
-* New bundle : 8.1.11 (Issue crazy-max/neard#260)
+* New bundle : 8.1.11 (Issue neard/neard#260)
 
 ## r3 (2016/10/11)
 
-* New bundles : 7.4.0, 8.1.5 (Issue crazy-max/neard#121)
+* New bundles : 7.4.0, 8.1.5 (Issue neard/neard#121)
 
 ## r2 (2016/05/12)
 
-* Add bundle : 8.1.2 (Issue crazy-max/neard#121)
+* Add bundle : 8.1.2 (Issue neard/neard#121)
 
 ## r1 (2016/04/30)
 
