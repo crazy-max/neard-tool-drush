@@ -5,7 +5,7 @@ This is a module of [Neard project](https://github.com/neard/neard) involving Dr
 
 ## Documentation and downloads
 
-http://neard.io/modules/drush
+https://neard.io/modules/drush
 
 ## Issues
 
